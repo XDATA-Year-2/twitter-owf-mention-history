@@ -213,10 +213,10 @@ recorders = dict()
 #recorders['target'] = queryHistory.TweeterHistory()
 recorders['source'] = TweeterHistory()
 recorders['source'].openHistoryStorage()
-recorders['source'].setMaxHistoryLength(20)
+recorders['source'].setMaxHistoryLength(40)
 recorders['target'] = TweeterHistory()
 recorders['target'].setIndexByTarget()
-recorders['target'].setMaxHistoryLength(20)
+recorders['target'].setMaxHistoryLength(40)
 recorders['target'].openHistoryStorage()
 queryCount = 0
 firsttime = True

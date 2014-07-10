@@ -32,8 +32,7 @@ twitter.echoLogsToConsole = false;
 
 twitter.ac = new activityLogger().echo(twitter.echoLogsToConsole).testing(twitter.testMode);
 ac = twitter.ac
-twitter.ac.registerActivityLogger(LoggingLocation, "Kitware_Twitter_Mention", "3.0");
-
+twitter.ac.registerActivityLogger(LoggingLocation, "Kitware_Twitter_Mention_OWF", "1.0");
 
 twitter.dayColor = d3.scale.category10();
 twitter.monthColor = d3.scale.category20();
@@ -83,7 +82,7 @@ twitter.getMongoDBInfo = function () {
     return {
         server: 'localhost',
         db:  'year2',
-        coll:  'twitter'
+        coll:  'twitter_mentions'
 
     };
 };
@@ -160,7 +159,7 @@ function updateGraph() {
      twitter.ac.logSystemActivity('Kitware Twitter Mention -'+logText);
 
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions_v2",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -452,11 +451,8 @@ function twitterDistanceFunction( distance) {
                 return twitter.nodeColorArray[distance]
 }
 
-window.onload = function () {
+function firstTimeInitialize() {
     "use strict";
-
-    //tangelo.requireCompatibleVersion("0.2");
-    //twitter.ac.logUILayout('Kitware Twiter Browsing', 'WindowOne', true, 1,1,1,1);
 
     // make the panel open & close over data content
     $('#control-panel').controlPanel()
@@ -527,7 +523,7 @@ window.onload = function () {
 
         force = d3.layout.force()
             .charge(-2000)
-            .linkDistance(100)
+            .linkDistance(75)
             .gravity(0.2)
             .friction(0.6)
             .size([width/2, height]);
@@ -692,6 +688,7 @@ function centerOnClickedGraphNode(item) {
         console.log("centering on:",item)
           // assign the new center of the mentions graph
           twitter.center.val(item)
+	  this.sendEntitySelectionMessage(item)
           // remove the previous graph
           d3.select("#nodes").selectAll("*").remove();
           d3.select("#links").selectAll("*").remove();
@@ -795,7 +792,7 @@ function updateHistoryLength(){
         };
         console.log("history length in JS is",data.displayLength)
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/xdata/twitter_mentions_v2",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -812,7 +809,7 @@ function updateHistoryStorageLength() {
         };
         console.log("history storage length in JS is",data.storageLength)
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/xdata/twitter_mentions_v2",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -862,7 +859,7 @@ function clearHistoryCallback() {
         actionCommand: 'clearHistory'
     };
       $.ajax({
-        url: "service/tweeters/" + twitter.host + "/xdata/twitter_mentions",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -871,3 +868,50 @@ function clearHistoryCallback() {
         }
     });
 }
+
+
+
+
+
+// added to integrate with OWF.  The window.onload call now checks if OWF is present and 
+// initializes a listener if it is present.  A listener is required because other widgets 
+// will set the bounds this app should use to render. 
+
+// this function is the top-level function invoked every time a message
+// is received on the OWF message bus.  The messages received 
+
+var processEchoMessage = function(sender, msg) {
+        console.log("mention received message:",msg)
+};
+
+var processCenterMessage = function(sender, msg) {
+        console.log("mention processing entity selection:",msg);
+	var newCenter = msg[0]
+ 	twitter.center.val(newCenter)
+	updateGraph()
+
+};
+
+var sendEntitySelectionMessage = function(sender,msg) {
+	console.log('mention sending message')
+	var outObject = {"user":"name"}
+	OWF.Eventing.publish('entity.selected',outObject)
+}
+
+ 
+
+function setupOWFListener() {
+   console.log("subscribing as listener");
+   OWF.Eventing.subscribe('kw.echo', this.processEchoMessage);
+   OWF.Eventing.subscribe('entity.selection', this.processCenterMessage);
+}
+
+// Ozone provides a way to test for an active session
+owfdojo.addOnLoad(function() {
+
+    	if (OWF.Util.isRunningInOWF()) {
+		OWF.ready(setupOWFListener);
+    	}
+   	firstTimeInitialize()
+ 
+});
