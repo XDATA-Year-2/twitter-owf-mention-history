@@ -1,6 +1,6 @@
 {
-  "width": 500,
-  "height": 220,
+  "width": 350,
+  "height": 160,
   "data": [
     {
       "name": "rows"
@@ -63,10 +63,10 @@
               "dy": {"value":-5},
               "angle":{"value":0},
               "y": {"scale": "y", "field": "data.2"},
-              "fill":{"value":"black"},
+              "fill":{"value":"yellow"},
               "opacity": {"value": 0.0}
             },
-            "update0" :   {"fill":{"value":"black"}, "opacity":{"value": 0}},
+            "update0" :   {"fill":{"value":"yellow"}, "opacity":{"value": 0}},
             "hover0" :  {"opacity": {"value":1.0}  }
           }
         }

@@ -82,7 +82,7 @@ twitter.getMongoDBInfo = function () {
     return {
         server: 'localhost',
         db:  'year2',
-        coll:  'twitter_mentions'
+        coll:  'twitter_mentions_sa'
 
     };
 };
@@ -159,7 +159,7 @@ function updateGraph() {
      twitter.ac.logSystemActivity('Kitware Twitter Mention -'+logText);
 
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions_sa",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -792,7 +792,7 @@ function updateHistoryLength(){
         };
         console.log("history length in JS is",data.displayLength)
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions_sa",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -809,7 +809,7 @@ function updateHistoryStorageLength() {
         };
         console.log("history storage length in JS is",data.storageLength)
     $.ajax({
-        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions_sa",
         data: data,
         dataType: "json",
         success: function (response) {
@@ -859,7 +859,7 @@ function clearHistoryCallback() {
         actionCommand: 'clearHistory'
     };
       $.ajax({
-        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions",
+        url: "service/tweeters/" + twitter.host + "/year2/twitter_mentions_sa",
         data: data,
         dataType: "json",
         success: function (response) {

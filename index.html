@@ -42,7 +42,7 @@
 <style>
     html, body {
         height: 100%;
-        background-color: white;
+        background-color: black;
     }
 
     body {
@@ -67,8 +67,6 @@
 </style>
 
 <title>Twitter Mention With History</title>
-
-
 
 <div id=info-panel class="modal fade draper" data-wf="1"  data-description="info panel">
     <div class=modal-dialog>
@@ -153,7 +151,7 @@
 
 <!-- Create a fullscreen SVG element -->
    <div class=row>
-        <div class=col-md-7>
+        <div class=col-md-6>
             <svg id=graph>
                 <g id="transform-group">
                     <rect id="overlay"></rect>
@@ -190,36 +188,36 @@
 <div id=control-panel style="opacity: 0.8">
     <div class=container>
         <div class=row>
-            <div class=col-md-3>
+            <div class=col-md-2>
                 <!-- JQuery slider -->
                 <h4>Date</h4>
                 <div id=date></div>
                 <div id=date-label class=code></div>
             </div>
 
-            <div class=col-md-3>
+            <div class=col-md-2>
                 <!-- JQuery slider -->
                 <h4>Date range</h4>
                 <div id=range></div>
                 <div id=range-label class=code></div>
             </div>
 
-            <div class=col-md-3>
+            <div class=col-md-2>
                 <h4>Central tweeter</h4>
                 <input id=center>
             </div>
 
-            <div class=col-md-3>
+            <div class=col-md-2>
                 <!-- JQuery spinner -->
                 <h4>Degree of separation</h4>
                 <input id=degree>
             </div>
-            <div class=col-md-3>
+            <div class=col-md-2>
                     <label class=checkbox>
                       <input type=checkbox id=usetext checked> Render text labels
                     </label>
             </div>
-            <div class=col-md-3>
+            <div class=col-md-2>
                     <label class=checkbox>
                       <input type=checkbox id=clickfollow>  Center graph on clicked node
                     </label>
@@ -227,7 +225,7 @@
         </div>
 
         <div class=row>
-            <div class=col-md-3>
+            <div class=col-md-2>
                 <div id=update class="btn btn-success offset1">Update</div>
                 <div id=animate class="btn btn-success ">Animate</div>
             </div>
