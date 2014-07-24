@@ -560,7 +560,7 @@ function firstTimeInitialize() {
 
         twitter.range.slider({
             min: 1,
-            max: 7,
+            max: 12,
             value: 1,
             slide: function (evt, ui) {
                 d3.select("#range-label")
@@ -627,6 +627,9 @@ function firstTimeInitialize() {
         d3.select("#update-history")
             .on("click", updateGraph);         
 
+        d3.select("#map-community")
+            .on("click", sendWholeCommunityEntitySelection);         
+
 // --- end of history panel additions
 
         d3.select("#update")
@@ -688,7 +691,8 @@ function centerOnClickedGraphNode(item) {
         console.log("centering on:",item)
           // assign the new center of the mentions graph
           twitter.center.val(item)
-	  this.sendEntitySelectionMessage(item)
+	  // send message to the map to update and center on this user
+	  this.sendEntitySelectionMessage([item])
           // remove the previous graph
           d3.select("#nodes").selectAll("*").remove();
           d3.select("#links").selectAll("*").remove();
@@ -726,6 +730,7 @@ function logMouseExitOnHistoryTag(item){
 function centerOnClickedHistoryRecord(item) {
     //console.log("centering on:",item.text)
     logClickOnHistoryEntry(item)
+
       // assign the new center of the mentions graph
       twitter.center.val(item.text)
       // remove the previous graph
@@ -733,6 +738,9 @@ function centerOnClickedHistoryRecord(item) {
       d3.select("#links").selectAll("*").remove();
       // draw the new graph
       updateGraph(true)
+
+    // tell other interested dashboard widgets to focus on a new entity
+    sendEntitySelectionMessage([item.text])
 }
 
  // bind data  with the vega spec.  We are also catching the mouse enter and mouse exit events on the
@@ -877,8 +885,19 @@ function clearHistoryCallback() {
 // initializes a listener if it is present.  A listener is required because other widgets 
 // will set the bounds this app should use to render. 
 
-// this function is the top-level function invoked every time a message
-// is received on the OWF message bus.  The messages received 
+// this function iterates through all nodes in the graph and builds up an ID list.  The
+// list is sent out as an entity.selection message on the bus for OWF widgets
+//
+function sendWholeCommunityEntitySelection() {
+  // iterate through graph and build a userlist
+  userlist = []
+  for (i=0; i<graph.nodes.length; i++) {
+    var newentry = graph.nodes[i].tweet + ' ';
+    userlist.push(newentry)
+  }
+  sendEntitySelectionMessage(userlist);
+}
+
 
 var processEchoMessage = function(sender, msg) {
         console.log("mention received message:",msg)
@@ -889,16 +908,17 @@ var processCenterMessage = function(sender, msg) {
 	var newCenter = msg[0]
  	twitter.center.val(newCenter)
 	updateGraph()
-
 };
 
-var sendEntitySelectionMessage = function(sender,msg) {
-	console.log('mention sending message')
-	var outObject = {"user":"name"}
-	OWF.Eventing.publish('entity.selected',outObject)
+// send out a message to indicate what user is currently selected.  This expects a list
+// because sometimes a whole community is sent  (e.g. ['harry'] or ['larry', 'moe', 'curly'])
+//
+function sendEntitySelectionMessage(userlist) {
+	var outObject = {"user":userlist}
+	console.log('mention sending message: ',outObject)
+	OWF.Eventing.publish('tangelo.map.entity.selection',outObject)
 }
 
- 
 
 function setupOWFListener() {
    console.log("subscribing as listener");
